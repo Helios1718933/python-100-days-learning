@@ -889,18 +889,9 @@ def captcha_generate(*,len = 4):
     print(ALL_CHARS)
     return ''.join(random.choices(ALL_CHARS, k=len)) 
 
-def is_prime(num: int) -> bool:
-    """
-    判断一个正整数是不是质数
-    :param num: 大于1的正整数
-    :return: 如果num是质数返回True，否则返回False
-    """
-    for i in range(2, int(num ** 0.5) + 1):
-        if num % i == 0:
-            return False
-    return True
 
 
+1231231231231231
 
 if __name__ == '__main__':
     print(captcha_generate(len = 5))
