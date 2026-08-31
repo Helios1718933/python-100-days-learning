@@ -958,7 +958,48 @@ def describe(data):
     print(f'标准差: {std(data)}')
     print(f'变异系数: {cv(data)}')
 
+def calc(*args, **kwargs):
+    items = list(args) + list(kwargs.values())
+    result = 0
+    for item in items:
+        if type(item) in (int, float):
+            result += item
+    return result
 
+def calc(init_value, op_func, *args, **kwargs): #简易版本的归约reduce
+    items = list(args) + list(kwargs.values())  #reduce：把一堆序列数据，通过一个二元函数，不断合并，最后变成一个值。
+    result = init_value
+    for item in items:
+        if type(item) in (int, float):
+            result = op_func(result, item)
+    return result
+
+def is_even(num):
+    """判断num是不是偶数"""
+    return num % 2 == 0
+
+
+def square(num):
+    """求平方"""
+    return num ** 2
+
+
+old_nums = [35, 12, 8, 99, 60, 52]
+new_nums = [num ** 2 for num in old_nums if num % 2 == 0]  #[表达式  for 变量 in 可迭代对象  if 条件判断]
+print(new_nums)  # [144, 64, 3600, 2704]
+
+#如果作为参数或者返回值的函数本身非常简单，一行代码就能够完成，也不需要考虑对函数的复用，那么我们可以使用 lambda 函数
+
+def lambda_show():
+    old_nums = [35, 12, 8, 99, 60, 52]
+    new_nums = list(map(lambda x: x ** 2, filter(lambda x: x % 2 == 0, old_nums)))
+    print(new_nums)  # [144, 64, 3600, 2704]
+
+
+#高阶函数、lambda、偏函数理解需要实践确认：具体工程时用于代码优化使用！
+
+#days16需要回顾，现结束，26/Aug/31
 
 if __name__ == '__main__':
-    print(median_self([1,2,3,4,9]))
+    
+    
