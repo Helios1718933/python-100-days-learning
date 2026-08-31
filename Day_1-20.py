@@ -952,7 +952,7 @@ def cv(data, ddof=1):
 def describe(data):
     """输出描述性统计信息"""
     print(f'均值: {mean(data)}')
-    print(f'中位数: {median(data)}')
+    #print(f'中位数: {median(data)}')
     print(f'极差: {ptp(data)}')
     print(f'方差: {var(data)}')
     print(f'标准差: {std(data)}')
@@ -984,9 +984,9 @@ def square(num):
     return num ** 2
 
 
-old_nums = [35, 12, 8, 99, 60, 52]
-new_nums = [num ** 2 for num in old_nums if num % 2 == 0]  #[表达式  for 变量 in 可迭代对象  if 条件判断]
-print(new_nums)  # [144, 64, 3600, 2704]
+#old_nums = [35, 12, 8, 99, 60, 52]
+#new_nums = [num ** 2 for num in old_nums if num % 2 == 0]  #[表达式  for 变量 in 可迭代对象  if 条件判断]
+#print(new_nums)  # [144, 64, 3600, 2704]
 
 #如果作为参数或者返回值的函数本身非常简单，一行代码就能够完成，也不需要考虑对函数的复用，那么我们可以使用 lambda 函数
 
@@ -1000,6 +1000,145 @@ def lambda_show():
 
 #days16需要回顾，现结束，26/Aug/31
 
+def day17_show():
+    import random
+    import time
+
+
+    def download(filename):
+        """下载文件"""
+        print(f'开始下载{filename}.')
+        time.sleep(random.random() * 6)
+        print(f'{filename}下载完成.')
+
+        
+    def upload(filename):
+        """上传文件"""
+        print(f'开始上传{filename}.')
+        time.sleep(random.random() * 8)
+        print(f'{filename}上传完成.')
+
+    #start = time.time()                    #这里的start和end会重复两次 我们可以使用装饰函数
+    download('MySQL从删库到跑路.avi')        #（用一个函数装饰另外一个函数并为其提供额外的能力）
+    #end = time.time()   
+    #print(f'花费时间:{end - start:.2f}S')
+
+    #start = time.time()    
+    upload('Python从入门到住院.pdf')
+    #end = time.time() 
+    #print(f'花费时间:{end - start:.2f}S')
+
+def record_time(func):  
+    import time                    
+    #参数是被装饰的函数func
+    def wrapper(*args, **kwargs):       #recodetime是通过函数体中的wrapper实现装饰和执行原func的；
+        start = time.time()
+        result = func(*args, **kwargs)  #不知道func接受的参数是什么类型，所以wrapper会照单全收然后传给func
+        end = time.time() 
+        print(f'花费时间:{end - start:.2f}S')
+        return result
+    return wrapper #record_time(day17_show)() #函数本身返回值为None
+"""装饰器中的4种调用方法
+调用写法	使用场景
+@decorator	写代码定义函数的时候永久装饰，90% 场景首选
+f = decorator(f); f()	运行过程中动态装饰，可以选择性开启装饰
+decorator(f)()	一次性调用，只跑一次，不需要保存装饰函数
+@decorator(参数)	需要给装饰器传入自定义配置
+"""
+"""
+import random
+import time
+
+from functools import wraps
+
+
+def record_time(func):
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        start = time.time()
+        result = func(*args, **kwargs)
+        end = time.time()
+        print(f'{func.__name__}执行时间: {end - start:.2f}秒')
+        return result
+
+    return wrapper
+
+
+@record_time
+def download(filename):
+    print(f'开始下载{filename}.')
+    time.sleep(random.random() * 6)
+    print(f'{filename}下载完成.')
+
+
+@record_time
+def upload(filename):
+    print(f'开始上传{filename}.')
+    time.sleep(random.random() * 8)
+    print(f'{filename}上传完成.')
+
+
+# 调用装饰后的函数会记录执行时间
+download('MySQL从删库到跑路.avi')
+upload('Python从入门到住院.pdf')
+# 取消装饰器的作用不记录执行时间
+download.__wrapped__('MySQL必知必会.pdf')
+upload.__wrapped__('Python从新手到大师.pdf')通过被装饰函数的__wrapped__属性获得被装饰之前的函数               
+"""
+
+#装饰器函数本身也可以参数化
+
+#递归函数
+def fac(num):
+    if num in (0, 1):  #递归收敛条件
+        return 1
+    return num * fac(num - 1) #递归公式，也就是递归函数的定义
+# 递归调用函数入栈
+# 5 * fac(4)
+# 5 * (4 * fac(3))
+# 5 * (4 * (3 * fac(2)))
+# 5 * (4 * (3 * (2 * fac(1))))
+# 停止递归函数出栈
+# 5 * (4 * (3 * (2 * 1)))
+# 5 * (4 * (3 * 2))
+# 5 * (4 * 6)
+# 5 * 24
+# 120
+#print(fac(5))    # 120
+
+def Recursion_show():
+    def fib1(n):
+        if n in (1, 2):
+            return 1
+        return fib1(n - 1) + fib1(n - 2)
+
+
+    for i in range(1, 21):
+        print(fib1(i))
+
+def fib2(n):
+    a, b = 0, 1
+    for _ in range(n):
+        a, b = b, a + b
+    return a
+
+from functools import lru_cache
+
+
+@lru_cache()
+def fib1(n):
+    if n in (1, 2):
+        return 1
+    return fib1(n - 1) + fib1(n - 2)
+
+
+#for i in range(1, 51):
+    print(i, fib1(i))
+"""
+lru_cache函数是一个带参数的装饰器，所以上面第4行代码使用装饰器语法糖时，lru_cache后面要跟上圆括号。lru_cache函数有一个非常重要的参数叫maxsize，它可以用来定义缓存空间的大小，默认值是128。
+"""
+
+
 if __name__ == '__main__':
-    
-    
+    Recursion_show()
